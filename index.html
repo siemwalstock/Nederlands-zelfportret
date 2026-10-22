@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="nl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEM — Wie ik ben & Wat ik doe</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#7928CA',
+                            pink: '#FF0080',
+                            cyan: '#00DFD8',
+                            green: '#10B981',
+                            dark: '#07080c',
+                            card: 'rgba(19, 21, 32, 0.7)',
+                            border: 'rgba(255, 255, 255, 0.12)'
+                        }
+                    },
+                    fontFamily: {
+                        syne: ['Syne', 'sans-serif'],
+                        grotesk: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #07080c;
+            color: #f3f4f6;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Subtle glowing background shapes */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(130px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-orb-1 {
+            top: -5%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: #00DFD8;
+        }
+
+        .glow-orb-2 {
+            top: 35%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: #FF0080;
+        }
+
+        .glow-orb-3 {
+            bottom: 10%;
+            left: 20%;
+            width: 550px;
+            height: 550px;
+            background: #7928CA;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(19, 21, 32, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Text Stroke Utilities */
+        .text-stroke {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-stroke-cyan {
+            -webkit-text-stroke: 1px #00DFD8;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Ticker Marquee */
+        .marquee-container {
+            display: flex;
+            overflow: hidden;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: flex;
+            gap: 2rem;
+            animation: scroll 22s linear infinite;
+        }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* Pulse Dot Animation */
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-brand-pink selection:text-white pb-24">
+
+    <!-- Ambient Glowing Orbs -->
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 px-6 py-4 backdrop-blur-md bg-brand-dark/80 border-b border-white/10">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="font-syne text-2xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan via-white to-brand-pink">
+                SIEM<span class="text-brand-pink">.</span>
+            </a>
+            
+            <nav class="hidden md:flex gap-8 text-xs font-mono tracking-wider uppercase text-gray-400">
+                <a href="#identiteit" class="hover:text-brand-cyan transition-colors">01. Wie ik ben</a>
+                <a href="#horizon" class="hover:text-brand-pink transition-colors">02. De Toekomst</a>
+                <a href="#passies" class="hover:text-brand-cyan transition-colors">03. Mijn Hobby's</a>
+                <a href="#reflectie" class="hover:text-brand-pink transition-colors">04. Wat anderen zeggen</a>
+            </nav>
+
+            <button id="lasagneBtnNav" class="px-4 py-2 rounded-full font-bold text-xs uppercase tracking-widest bg-gradient-to-r from-brand-pink to-brand-purple hover:opacity-90 text-white shadow-lg transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <span>🍝</span> Lasagne
+            </button>
+        </div>
+    </header>
+
+    <!-- Infinite Marquee Ticker -->
+    <div class="w-full bg-gradient-to-r from-brand-purple via-brand-pink to-brand-cyan py-2 text-black font-extrabold text-xs uppercase tracking-widest overflow-hidden my-4 transform -rotate-1 scale-105 shadow-xl">
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span>✦ SIEM WALSTOCK</span>
+                <span>✦ 17 JAAR</span>
+                <span>✦ SOFTWARE DEVELOPER IN OPLEIDING</span>
+                <span>✦ SINTLUCAS EINDHOVEN</span>
+                <span>✦ SWALMEN, LIMBURG</span>
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+                <span>✦ SIEM WALSTOCK</span>
+                <span>✦ 17 JAAR</span>
+                <span>✦ SOFTWARE DEVELOPER IN OPLEIDING</span>
+                <span>✦ SINTLUCAS EINDHOVEN</span>
+                <span>✦ SWALMEN, LIMBURG</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 pt-10 space-y-28 relative z-10">
+
+        <!-- HERO SECTION -->
+        <section class="relative">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-xs font-mono font-bold tracking-widest uppercase mb-6">
+                <span class="w-2 h-2 rounded-full bg-brand-cyan pulse-dot"></span>
+                Opdracht Nederlands — Zelfportret
+            </div>
+            
+            <h1 class="font-syne text-5xl sm:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight mb-6">
+                HOI, IK BEN <br>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan via-brand-pink to-brand-purple">SIEM.</span>
+            </h1>
+
+            <p class="text-lg sm:text-xl text-gray-300 font-normal max-w-2xl leading-relaxed">
+                Een kort overzicht van wie ik ben, wat ik doe op het SintLucas, mijn passie voor code én mijn droom om uiteindelijk bij de politie te gaan.
+            </p>
+        </section>
+
+        <!-- SECTION 01: IDENTITEIT -->
+        <section id="identiteit" class="scroll-mt-28 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-2">
+                <div>
+                    <span class="text-brand-cyan font-mono font-bold text-xs tracking-widest uppercase">01 / Basis</span>
+                    <h2 class="font-syne text-3xl sm:text-4xl font-extrabold mt-1">Wie ik ben & Waar ik sta</h2>
+                </div>
+                <p class="text-gray-400 max-w-md text-xs font-mono">Mijn thuissituatie, woonplaats en de stap naar het SintLucas.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Info Cards -->
+                <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    
+                    <!-- De Kern -->
+                    <div class="glass-card p-6 rounded-3xl sm:col-span-2 relative overflow-hidden">
+                        <div class="text-brand-pink font-mono text-xs font-bold uppercase tracking-widest mb-2">Achtergrond</div>
+                        <h3 class="font-syne text-xl font-bold mb-3">Thuis in Swalmen</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                            Ik ben 17 jaar en woon in Swalmen, een klein dorpje in Limburg vlakbij Roermond. Mijn ouders zijn gescheiden, dus mijn week ziet er eigenlijk zo uit:
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                            <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                                <span class="text-brand-cyan block font-bold mb-1">Bij mijn moeder:</span>
+                                Samen met mijn broertje Tren, mijn moeder Cindy en onze hond Fien.
+                            </div>
+                            <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                                <span class="text-brand-pink block font-bold mb-1">Om het weekend bij mijn vader:</span>
+                                Samen met mijn vader Marc, stiefmoeder Vanessa, stiefzusje Joes en kat Milo.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- De Opleiding -->
+                    <div class="glass-card p-6 rounded-3xl">
+                        <div class="text-brand-cyan font-mono text-xs font-bold uppercase tracking-widest mb-2">De Overstap</div>
+                        <h3 class="font-syne text-lg font-bold mb-2">Van HAVO naar MBO</h3>
+                        <p class="text-gray-300 text-xs leading-relaxed">
+                            Ik zat eerst op HAVO 4, maar merkte dat het gewoon niet echt mijn ding was. Ik wou meer praktisch bezig zijn met dingen die ik echt leuk vind. Zo kwam ik bij SintLucas uit.
+                        </p>
+                    </div>
+
+                    <!-- Software Development -->
+                    <div class="glass-card p-6 rounded-3xl">
+                        <div class="text-brand-purple font-mono text-xs font-bold uppercase tracking-widest mb-2">Mijn Opleiding</div>
+                        <h3 class="font-syne text-lg font-bold mb-2">Software Development</h3>
+                        <p class="text-gray-300 text-xs leading-relaxed">
+                            Thuis was ik altijd al bezig met computers, programmeren en het maken van dingen in games. De keuze voor Software Dev was dus een logische stap.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Digital Avatar Display Card -->
+                <div class="lg:col-span-5 flex flex-col">
+                    <div class="glass-card p-6 rounded-3xl flex-1 flex flex-col justify-between border border-brand-cyan/30">
+                        <div class="relative w-full h-64 lg:h-full rounded-2xl overflow-hidden bg-gradient-to-br from-brand-dark via-gray-900 to-brand-purple/40 flex items-center justify-center p-6 text-center">
+                            <div class="space-y-3">
+                                <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-brand-pink via-brand-purple to-brand-cyan p-1 shadow-2xl">
+                                    <div class="w-full h-full bg-brand-dark rounded-full flex items-center justify-center font-syne text-3xl font-extrabold text-white">
+                                        S
+                                    </div>
+                                </div>
+                                <div class="font-mono text-xs tracking-widest text-brand-cyan uppercase">SIEM WALSTOCK</div>
+                                <h4 class="font-syne text-xl font-bold">SintLucas Eindhoven</h4>
+                                <div class="flex justify-center gap-2">
+                                    <span class="px-3 py-1 rounded-md bg-white/10 text-xs font-mono">17 JAAR</span>
+                                    <span class="px-3 py-1 rounded-md bg-brand-pink/20 text-brand-pink text-xs font-mono">STUDENT SD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center font-mono text-xs text-gray-400">
+                            "Creatief bezig zijn met techniek."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 02: MIJN TOEKOMST & AMBITIE -->
+        <section id="horizon" class="scroll-mt-28 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-2">
+                <div>
+                    <span class="text-brand-pink font-mono font-bold text-xs tracking-widest uppercase">02 / Ambitie</span>
+                    <h2 class="font-syne text-3xl sm:text-4xl font-extrabold mt-1">Mijn Toekomst & Dromen</h2>
+                </div>
+                <p class="text-gray-400 max-w-md text-xs font-mono">Waarom ik uiteindelijk de straat op wil bij de politie.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 10 Jaar -->
+                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-brand-cyan">
+                    <span class="text-4xl font-extrabold font-syne text-stroke-cyan block mb-3">10 JAAR</span>
+                    <div class="text-brand-cyan font-mono text-xs font-bold uppercase tracking-widest mb-1">Waar zie ik mezelf?</div>
+                    <h3 class="font-syne text-xl font-bold mb-2">Bij de Politie</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">
+                        Over 10 jaar hoop ik mijn MBO-diploma al een tijdje op zak te hebben en echt bij de politie te werken. Het lijkt me geweldig om buiten op straat aan het werk te zijn.
+                    </p>
+                </div>
+
+                <!-- Droombaan -->
+                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-brand-pink">
+                    <span class="text-4xl font-extrabold font-syne text-stroke block mb-3">DROOM</span>
+                    <div class="text-brand-pink font-mono text-xs font-bold uppercase tracking-widest mb-1">Mijn Motivatie</div>
+                    <h3 class="font-syne text-xl font-bold mb-2">Iets betekenisvols doen</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">
+                        Het politiewerk trekt me heel erg aan omdat je echt iets kunt betekenen voor mensen. Actie, afwisseling en het helpen van anderen op straat is wat me echt aanspreekt.
+                    </p>
+                </div>
+
+                <!-- Kernwaarden -->
+                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-brand-purple">
+                    <span class="text-4xl font-extrabold font-syne text-stroke block mb-3">DOEL</span>
+                    <div class="text-brand-purple font-mono text-xs font-bold uppercase tracking-widest mb-1">Belangrijkste Les</div>
+                    <h3 class="font-syne text-2xl font-bold mb-2">Gewoon Gelukkig Zijn</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">
+                        Uiteindelijk draait het er voor mij om dat ik gewoon gelukkig ben met wat ik doe. Veel geld verdienen is leuk, maar dat alles op z'n plek valt is voor mij veel belangrijker.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TOGGLEABLE CAREER PREVIEW CARD -->
+            <div class="glass-card p-6 rounded-3xl border border-blue-500/30 bg-gradient-to-br from-blue-950/40 via-brand-dark to-purple-950/40">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-blue-400 font-mono text-xs font-bold uppercase tracking-widest">Twee Kanten van Siem</span>
+                        <h3 class="font-syne text-2xl font-bold mt-1">Code vs. Politie</h3>
+                    </div>
+                    
+                    <!-- Toggle Switch -->
+                    <div class="inline-flex p-1 rounded-xl bg-white/10 border border-white/10">
+                        <button id="modeDevBtn" class="px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all bg-brand-cyan text-black">
+                            💻 IT / SOFTWARE
+                        </button>
+                        <button id="modePoliceBtn" class="px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all text-gray-400 hover:text-white">
+                            👮‍♂️ POLITIE / STRAAT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Content Box -->
+                <div id="careerModeContent" class="p-5 rounded-2xl bg-white/5 border border-white/10 transition-all">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="careerIcon" class="text-2xl">💻</span>
+                        <div>
+                            <h4 id="careerTitle" class="font-syne text-lg font-bold text-brand-cyan">Software Development (Nu)</h4>
+                            <span id="careerTag" class="text-xs font-mono text-gray-400">SINTLUCAS SFEER</span>
+                        </div>
+                    </div>
+                    <p id="careerDesc" class="text-gray-300 text-xs leading-relaxed">
+                        Logisch nadenken, problemen oplossen, websites en functionaliteiten bouwen en creatief bezig zijn achter het scherm.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 03: PASSIES -->
+        <section id="passies" class="scroll-mt-28 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-2">
+                <div>
+                    <span class="text-brand-cyan font-mono font-bold text-xs tracking-widest uppercase">03 / Vrije tijd</span>
+                    <h2 class="font-syne text-3xl sm:text-4xl font-extrabold mt-1">Waar ik energie uit haal</h2>
+                </div>
+                <p class="text-gray-400 max-w-md text-xs font-mono">Dingen die ik graag doe als ik niet op school zit.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-3xl space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-cyan/20 text-brand-cyan flex items-center justify-center text-xl font-bold">
+                        👥
+                    </div>
+                    <h3 class="font-syne text-lg font-bold">Vrienden & Chillen</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">
+                        Spontaan afspreken, bellen, wat drinken of gewoon een beetje rondhangen. Daar kan ik echt van opladen en word ik gewoon vrolijk van.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-pink/20 text-brand-pink flex items-center justify-center text-xl font-bold">
+                        🎮
+                    </div>
+                    <h3 class="font-syne text-lg font-bold">Gamen & Coden</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">
+                        Achter de pc zitten, toffe games spelen met vrienden ver gewoon zelf aan de slag gaan met het bouwen en testen van dingen in code.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold">
+                        🌱
+                    </div>
+                    <h3 class="font-syne text-lg font-bold">Buiten bezig zijn</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed">
+                        Lekker even in de tuin werken of buiten zijn. Verstand op nul, frisse lucht pakken en even niet achter een scherm zitten.
+                    </p>
+                </div>
+            </div>
+
+            <!-- LASAGNE CELEBRATION BOX -->
+            <div class="glass-card p-6 rounded-3xl bg-gradient-to-br from-brand-pink/20 via-brand-dark to-brand-purple/20 border border-brand-pink/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="space-y-1 text-center sm:text-left">
+                    <span class="text-brand-pink font-mono text-xs font-bold uppercase tracking-widest">Waar je me voor wakker mag maken:</span>
+                    <h3 class="font-syne text-2xl font-extrabold">De Lasagne van mijn moeder! 🍝</h3>
+                    <p class="text-gray-300 text-xs">Simpel, maar echt altijd goed.</p>
+                </div>
+                <button id="lasagneBtnMain" class="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple hover:opacity-90 text-white font-bold text-xs tracking-wider uppercase shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2 flex-shrink-0">
+                    <span>🎉</span> Confetti Knoppie
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 04: REFLECTIE -->
+        <section id="reflectie" class="scroll-mt-28 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 gap-2">
+                <div>
+                    <span class="text-brand-pink font-mono font-bold text-xs tracking-widest uppercase">04 / Reflectie</span>
+                    <h2 class="font-syne text-3xl sm:text-4xl font-extrabold mt-1">Wat anderen over mij zeggen</h2>
+                </div>
+                <p class="text-gray-400 max-w-md text-xs font-mono">Een paar uitspraken van vrienden en familie verzameld voor deze opdracht.</p>
+            </div>
+
+            <!-- S-I-E-M ACRONYM DECODER CARDS -->
+            <div class="glass-card p-6 rounded-3xl border border-brand-cyan/30">
+                <div class="text-center max-w-lg mx-auto mb-6">
+                    <span class="text-brand-cyan font-mono text-xs font-bold uppercase tracking-widest">Mijn Naam in Kernwoorden</span>
+                    <h3 class="font-syne text-2xl font-bold mt-1">S - I - E - M</h3>
+                    <p class="text-gray-400 text-xs mt-1">Klik op een letter om te zien wat het betekent</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- S Card -->
+                    <div data-letter="S" class="siem-card p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-cyan transition-all text-center cursor-pointer group">
+                        <div class="font-syne text-5xl font-extrabold text-brand-cyan mb-1 group-hover:scale-110 transition-transform">S</div>
+                        <div class="font-bold text-base text-white">Slim</div>
+                        <p class="text-xs text-gray-400 mt-2 hidden letter-desc">Snel van begrip en zoek snel een praktische oplossing voor dingen.</p>
+                    </div>
+
+                    <!-- I Card -->
+                    <div data-letter="I" class="siem-card p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-pink transition-all text-center cursor-pointer group">
+                        <div class="font-syne text-5xl font-extrabold text-brand-pink mb-1 group-hover:scale-110 transition-transform">I</div>
+                        <div class="font-bold text-base text-white">Intelligent</div>
+                        <p class="text-xs text-gray-400 mt-2 hidden letter-desc">Inzicht in hoe systemen en situaties in elkaar steken.</p>
+                    </div>
+
+                    <!-- E Card -->
+                    <div data-letter="E" class="siem-card p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-purple transition-all text-center cursor-pointer group">
+                        <div class="font-syne text-5xl font-extrabold text-brand-purple mb-1 group-hover:scale-110 transition-transform">E</div>
+                        <div class="font-bold text-base text-white">Empatisch</div>
+                        <p class="text-xs text-gray-400 mt-2 hidden letter-desc">Oog voor anderen, betrokken bij vrienden en de omgeving.</p>
+                    </div>
+
+                    <!-- M Card -->
+                    <div data-letter="M" class="siem-card p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-400 transition-all text-center cursor-pointer group">
+                        <div class="font-syne text-5xl font-extrabold text-emerald-400 mb-1 group-hover:scale-110 transition-transform">M</div>
+                        <div class="font-bold text-base text-white">Mooi</div>
+                        <p class="text-xs text-gray-400 mt-2 hidden letter-desc">Gewoon gewaardeerd worden om wie je bent als persoon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quotes List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="glass-card p-5 rounded-2xl space-y-1">
+                    <span class="text-brand-cyan font-mono text-xs font-bold">01 / Mijn Stemming</span>
+                    <p class="text-gray-200 text-xs font-medium">"Ligt eraan hoe ik me voel: als ik druk ben is het goed, als ik rustig ben iets minder."</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-1">
+                    <span class="text-brand-pink font-mono text-xs font-bold">02 / Mijn Eigenschap</span>
+                    <p class="text-gray-200 text-xs font-medium">"Vooral veel openheid en spontaniteit."</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-1">
+                    <span class="text-brand-purple font-mono text-xs font-bold">03 / Energie</span>
+                    <p class="text-gray-200 text-xs font-medium">"Je kunt heel erg aanwezig en druk zijn, maar ook in één keer uit staan."</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-1">
+                    <span class="text-emerald-400 font-mono text-xs font-bold">04 / Gewoontes</span>
+                    <p class="text-gray-200 text-xs font-medium">"Even snel wat halen bij de Albert Heijn of weer iets van Apple kopen."</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-1">
+                    <span class="text-brand-cyan font-mono text-xs font-bold">05 / Focus</span>
+                    <p class="text-gray-200 text-xs font-medium">"Als je echt ergens mee bezig bent, ben je heel erg in jezelf gekeerd."</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl space-y-1">
+                    <span class="text-brand-pink font-mono text-xs font-bold">06 / Richting</span>
+                    <p class="text-gray-200 text-xs font-medium">"Sowieso iets met computers en techniek."</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+   <!-- Footer -->
+    <footer class="mt-24 border-t border-white/10 pt-8 pb-8 text-center text-gray-500 font-mono text-xs">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>Siem Walstock — Opdracht Nederlands / SintLucas SD</div>
+        <button id="scrollTopBtn" class="hover:text-brand-cyan transition-colors">↑ Terug naar boven</button>
+    </div>
+    </footer>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Confetti Triggers for Lasagne Buttons
+            const triggerConfetti = () => {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#00DFD8', '#FF0080', '#7928CA', '#10B981']
+                    });
+                }
+            };
+
+            const lasagneBtnNav = document.getElementById('lasagneBtnNav');
+            const lasagneBtnMain = document.getElementById('lasagneBtnMain');
+
+            if (lasagneBtnNav) lasagneBtnNav.addEventListener('click', triggerConfetti);
+            if (lasagneBtnMain) lasagneBtnMain.addEventListener('click', triggerConfetti);
+
+            // 2. Interactive Career Switcher Logic
+            const modeDevBtn = document.getElementById('modeDevBtn');
+            const modePoliceBtn = document.getElementById('modePoliceBtn');
+            const careerIcon = document.getElementById('careerIcon');
+            const careerTitle = document.getElementById('careerTitle');
+            const careerTag = document.getElementById('careerTag');
+            const careerDesc = document.getElementById('careerDesc');
+
+            if (modeDevBtn && modePoliceBtn) {
+                modeDevBtn.addEventListener('click', () => {
+                    modeDevBtn.className = "px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all bg-brand-cyan text-black";
+                    modePoliceBtn.className = "px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all text-gray-400 hover:text-white";
+                    
+                    careerIcon.textContent = "💻";
+                    careerTitle.textContent = "Software Development (Nu)";
+                    careerTitle.className = "font-syne text-lg font-bold text-brand-cyan";
+                    careerTag.textContent = "SINTLUCAS SFEER";
+                    careerDesc.textContent = "Logisch nadenken, problemen oplossen, websites en functionaliteiten bouwen en creatief bezig zijn achter het scherm.";
+                });
+
+                modePoliceBtn.addEventListener('click', () => {
+                    modePoliceBtn.className = "px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all bg-brand-pink text-white";
+                    modeDevBtn.className = "px-4 py-2 rounded-lg font-mono text-xs font-bold transition-all text-gray-400 hover:text-white";
+                    
+                    careerIcon.textContent = "👮‍♂️";
+                    careerTitle.textContent = "Politie (Toekomst)";
+                    careerTitle.className = "font-syne text-lg font-bold text-brand-pink";
+                    careerTag.textContent = "AMBITIE OP STRAAT";
+                    careerDesc.textContent = "Actie op straat, maatschappelijke impact maken, mensen helpen in lastige situaties en zorgen voor veiligheid.";
+                });
+            }
+
+            // 3. S-I-E-M Acronym Cards Interactive Reveal
+            const siemCards = document.querySelectorAll('.siem-card');
+            siemCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const desc = card.querySelector('.letter-desc');
+                    if (desc) {
+                        desc.classList.toggle('hidden');
+                    }
+                });
+            });
+
+            // 4. Scroll to top button
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            if (scrollTopBtn) {
+                scrollTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
